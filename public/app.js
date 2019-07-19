@@ -5,6 +5,21 @@ $.getJSON("/articles", function (data) {
     }
 });
 
+$('#scrape').on('click', function (event) {
+    event.preventDefault();
+    $.ajax({
+        url: '/scrape',
+        type: 'GET',
+    }).done(function(response) {
+        $('#numArticles').text(response.count)
+        $('#modal').modal({show: 'true'});
+        console.log(response.count)
+        console.log("scrape successful!")
+    })
+})
+
+$("save")
+
 // Whenever someone clicks a p tag
 $(document).on("click", "p", function () {
     // Empty the notes from the note section

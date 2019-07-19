@@ -1,0 +1,27 @@
+<div class="head-container">
+    <div class="header">
+        <h1>Mongo Scrapper</h1>
+        <h2><i>Movie edition</i></h2>
+    </div>
+</div>
+
+<div class="container">
+    <div class="col-md-12 articles">
+        {{#if article}}
+        {{#each article}}
+        <br>
+        <div class="panel panel-default ">
+            <div class="panel-heading">
+                <h4>{{this.title}}</h4>
+            </div>
+            <hr>
+            <div class="panel-body">
+                <a href={{this.link}} target="_blank">{{this.link}}</a>
+                <br><br>
+                <button type="button" class="btn btn-danger save" data-id={{this._id}}>Save Article</button>
+            </div>
+        </div>
+        {{/each}}
+        {{/if}}
+    </div>
+</div>

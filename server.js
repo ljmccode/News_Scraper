@@ -1,6 +1,8 @@
 var express = require("express");
 var logger = require("morgan");
 var mongoose = require("mongoose");
+var Note = require("./models/Note")
+var Article = require("./models/Article")
 
 // If deployed, use the deloyed database. Otherwise use the local mongoHeadlines database
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
@@ -27,9 +29,24 @@ app.use(express.json());
 // Make public a static folder
 app.use(express.static("public"));
 
+var exphbs = require("express-handlebars");
+
+app.engine("handlebars", exphbs({ defaultLayout: "main"}));
+app.set("view engine", "handlebars");
+
 // Routes
 
 // A GET route for scraping the screenrant website
+app.get("/", function(req, res) {
+  Article.find({"saved": false}, function(error, data) {
+      var hbsObject = {
+        article: data
+      };
+      console.log(hbsObject)
+      res.render("index", hbsObject)
+  });
+});
+
 app.get("/scrape", function(req, res) {
     // grabs the body of the html with axios
     axios.get("https://screenrant.com/movie-news/").then(function(response) {
@@ -61,6 +78,16 @@ app.get("/scrape", function(req, res) {
         // Send a message to the client
         res.send("Scrape Complete")
     })
+})
+
+// Route getting saved articles
+app.get("/saved", function(req, res) {
+  Article.find({"saved": true}, function(error, data) {
+    var hbsObject = {
+      article: data
+    };
+    res.render("saved", hbsObject)
+});
 })
 
 // Route for getting all Articles from the db

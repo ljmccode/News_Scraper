@@ -1,0 +1,32 @@
+<div class="container">
+    <div class="col-md-12 jumbotron">
+        <div class="text-center headline">
+            <h1>Saved Articles</h1>
+        </div>
+    </div>
+    <div class="col-md-12"></div>
+        {{#if article}}
+            {{#each article}}
+                <br>
+                <div class="panel panel-default ">
+                    <div class="panel-heading">
+                        <h4>{{this.title}}</h4>
+                    </div>
+                    <hr>
+                    <div class="panel-body">
+                        <a href={{this.link}} target="_blank">{{this.link}}</a>
+                        <br><br>
+                        <button type="button" class="btn btn-danger add" data-toggle="model" data-target="#noteModal{{this._id}}" data-id={{this._id}}> View/Add Notes </button>
+                        <button type="button" class="btn btn-danger remove" data-id={{this._id}}>Remove from Saved</button>
+                    </div>
+                </div>
+            {{/each}}
+        {{else}}
+        <div class="panel panel-default ">
+            <div class="panel-body">
+                <h3>You have no saved articles at this time.</h3>
+            </div>
+        </div>
+        {{/if}}
+    </div>
+</div>
