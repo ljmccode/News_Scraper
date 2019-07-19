@@ -10,11 +10,12 @@ $('#scrape').on('click', function (event) {
     $.ajax({
         url: '/scrape',
         type: 'GET',
-    }).done(function(response) {
+    }).then(function(response) {
         $('#numArticles').text(response.count)
         $('#modal').modal({show: 'true'});
         console.log(response.count)
         console.log("scrape successful!")
+        window.location = "/"
     })
 })
 
@@ -24,10 +25,23 @@ $(".save").on("click", function() {
     $.ajax({
         method: "POST",
         url: "/articles/save/" + articleId
-    }).done(function(data) {
+    }).then(function(data) {
         console.log("article saved!")
         console.log(data)
         window.location = "/"
+    })
+})
+
+$(".remove").on("click", function() {
+    console.log("clicked")
+    var articleId = $(this).attr("data-id");
+    $.ajax({
+        method: "POST",
+        url: "/articles/delete/" + articleId
+    }).then(function(data) {
+        console.log("article deleted!")
+        console.log(data)
+        window.location = "/saved"
     })
 })
 

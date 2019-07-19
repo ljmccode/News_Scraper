@@ -127,17 +127,31 @@ app.post("/articles/:id", function(req, res) {
       });
   });
 
-// 
+// save article
 app.post("/articles/save/:id", function(req, res) {
+  // update article's boolean to true
     db.Article.findOneAndUpdate({"_id": req.params.id}, {"saved": true})
     .then(function(error, data) {
         if (error) {
-          console.log(error);
+            console.log(error);
         } else {
-          res.send(data)
+            res.send(data)
         }
     });
 });
+
+// delete saved article
+app.post("/articles/delete/:id", function(req, res) {
+  // update article's boolean to false
+  db.Article.findByIdAndUpdate({"_id": req.params.id}, {"saved": false, "notes": []})
+  .then(function(error, data) {
+      if (error) {
+          console.log(error);
+      } else {
+          res.send(data)
+    }
+  })
+})
 
 // Start the server
 app.listen(PORT, function() {
