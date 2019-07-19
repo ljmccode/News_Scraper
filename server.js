@@ -124,8 +124,20 @@ app.post("/articles/:id", function(req, res) {
       })
       .catch(function(err) {
         res.json(err)
-      })
+      });
   });
+
+// 
+app.post("/articles/save/:id", function(req, res) {
+    db.Article.findOneAndUpdate({"_id": req.params.id}, {"saved": true})
+    .then(function(error, data) {
+        if (error) {
+          console.log(error);
+        } else {
+          res.send(data)
+        }
+    });
+});
 
 // Start the server
 app.listen(PORT, function() {

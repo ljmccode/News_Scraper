@@ -18,7 +18,19 @@ $('#scrape').on('click', function (event) {
     })
 })
 
-$("save")
+$(".save").on("click", function() {
+    console.log("clicked")
+    var articleId = $(this).attr("data-id");
+    $.ajax({
+        method: "POST",
+        url: "/articles/save/" + articleId
+    }).done(function(data) {
+        console.log("article saved!")
+        console.log(data)
+        window.location = "/"
+    })
+})
+
 
 // Whenever someone clicks a p tag
 $(document).on("click", "p", function () {
