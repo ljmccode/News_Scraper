@@ -45,6 +45,19 @@ $(".remove").on("click", function() {
     })
 })
 
+$(".save").on("click", function() {
+    console.log("clicked")
+    var articleId = $(this).attr("data-id");
+    $.ajax({
+        method: "POST",
+        url: "/articles/save/" + articleId
+    }).then(function(data) {
+        console.log("article deleted!")
+        console.log(data)
+        window.location = "/saved"
+    })
+})
+
 
 // Whenever someone clicks a p tag
 $(document).on("click", "p", function () {
