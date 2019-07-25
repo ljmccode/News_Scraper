@@ -1,123 +1,81 @@
-$.getJSON("/articles", function (data) {
-    for (var i = 0; i < data.length; i++) {
-        // Display the appropriate info on the page
-        $("#articles").append("<p data-id='" + data[i]._id + "'>" + data[i].title + "<br />" + data[i].link + "</p>");
-    }
-});
-
 $('#scrape').on('click', function (event) {
     event.preventDefault();
     $.ajax({
         url: '/scrape',
         type: 'GET',
-    }).then(function(response) {
-        $('#numArticles').text(response.count)
-        $('#modal').modal({show: 'true'});
-        console.log(response.count)
-        console.log("scrape successful!")
-        window.location = "/"
+    }).done(function(response) {
+        // $('#numArticles').text(response.count)
+        // $('#modal').modal({show: 'true'});
+        // console.log(response.count)
+        // console.log("scrape successful!")
+        window.location.href = "/";
     })
 })
 
+// On click to save article
 $(".save").on("click", function() {
-    console.log("clicked")
+    $(this).parent().remove();
     var articleId = $(this).attr("data-id");
+    $(".article").filter("[data-id='" + articleId +"']").remove();
     $.ajax({
         method: "POST",
-        url: "/articles/save/" + articleId
-    }).then(function(data) {
-        console.log("article saved!")
-        console.log(data)
-        window.location = "/"
+        url: "/save/" + articleId
+    }).done(function(data) {
+        console.log("saved article")
     })
 })
 
+// Open note modal and populate notes
+$(".addNote").on("click", function() {
+    console.log("clicked")
+    $("#notes").empty();
+    var thisId = $(this).attr("data-id");
+    $.ajax({
+      method: "GET",
+      url: "/grabNotes/" + thisId
+    }).then(function(data){
+        console.log("hit");
+        console.log(data);
+          $("#notes").append("<h3>" + data.title + "</h3>");
+          $("#notes").append("<p id='notesbody'></p>");
+          $("#notes").append("<div class='form-group'><label for='note-input'>Enter Note Here: </label>textarea class='form-control' id='note-input' rows='4' placeholder='New Note></div>");
+          $("#notes").append("<button class='btn btn-default' data-id='" + data._id + "' id='savenote'>Save Note</button>");
+          if (data.note) {
+            $("#notesbody").text(data.note.body);
+          }
+      });
+      $('#noteModal').modal();
+  });
+
+$(".newNote").on("click", function() {
+    console.log("clicked")
+    var noteId = $(this).attr("data-id");
+    if (!$("#noteText" + noteId).val()) {
+        alert("Please enter note")
+    } else {
+        $.ajax({
+            method: "POST",
+            url: "/newNote/" + noteId,
+            data: {
+                text: $("#noteText" + noteId).val()
+            }
+        }).done(function(data) {
+            console.log("note saved!")
+            console.log(data);
+            $("#noteText" + noteId).val("")
+            window.location = "/saved"
+        })
+    }
+})
+
+// Remove saved note
 $(".remove").on("click", function() {
     console.log("clicked")
     var articleId = $(this).attr("data-id");
     $.ajax({
         method: "POST",
-        url: "/articles/delete/" + articleId
-    }).then(function(data) {
-        console.log("article deleted!")
-        console.log(data)
-        window.location = "/saved"
-    })
-})
-
-$(".save").on("click", function() {
-    console.log("clicked")
-    var articleId = $(this).attr("data-id");
-    $.ajax({
-        method: "POST",
-        url: "/articles/save/" + articleId
-    }).then(function(data) {
-        console.log("article deleted!")
-        console.log(data)
-        window.location = "/saved"
-    })
-})
-
-
-// Whenever someone clicks a p tag
-$(document).on("click", "p", function () {
-    // Empty the notes from the note section
-    $("#notes").empty();
-    // Save the id from the p tag
-    var thisId = $(this).attr("data-id");
-
-    // Now make an ajax call for the Article
-    $.ajax({
-        method: "GET",
-        url: "/articles/" + thisId
-    })
-        // With that done, add the note information to the page
-        .then(function (data) {
-            console.log(data);
-            // The title of the article
-            $("#notes").append("<h2>" + data[0].title + "</h2>");
-            // An input to enter a new title
-            $("#notes").append("<input id='titleinput' name='title' >");
-            // A textarea to add a new note body
-            $("#notes").append("<textarea id='bodyinput' name='body'></textarea>");
-            // A button to submit a new note, with the id of the article saved to it
-            $("#notes").append("<button data-id='" + data[0]._id + "' id='savenote'>Save Note</button>");
-
-            // If there's a note in the article
-            if (data.note) {
-                // Place the title of the note in the title input
-                $("#titleinput").val(data.note.title);
-                // Place the body of the note in the body textarea
-                $("#bodyinput").val(data.note.body);
-            }
-        });
-    // When you click the savenote button
-    $(document).on("click", "#savenote", function () {
-        // Grab the id associated with the article from the submit button
-        var thisId = $(this).attr("data-id");
-
-        // Run a POST request to change the note, using what's entered in the inputs
-        $.ajax({
-            method: "POST",
-            url: "/articles/" + thisId,
-            data: {
-                // Value taken from title input
-                title: $("#titleinput").val(),
-                // Value taken from note textarea
-                body: $("#bodyinput").val()
-            }
-        })
-            // With that done
-            .then(function (data) {
-                // Log the response
-                console.log(data);
-                // Empty the notes section
-                $("#notes").empty();
-            });
-
-        // remove the values entered in the input and textarea for note entry
-        $("#titleinput").val("");
-        $("#bodyinput").val("");
+        url: "/unsave/" + articleId
+    }).done(function(data) {
+        console.log("removed")
     });
-
 });
