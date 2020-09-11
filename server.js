@@ -1,6 +1,8 @@
 var express = require("express");
 var logger = require("morgan");
 var mongoose = require("mongoose");
+var bodyParser = require("body-parser");
+var hbs = require("handlebars")
 
 
 var Note = require("./models/Note")
