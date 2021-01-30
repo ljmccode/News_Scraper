@@ -1,20 +1,33 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = new express.Router();
 const db = require("../models");
 
 const axios = require("axios");
 const cheerio = require("cheerio");
 
-// A GET route for scraping the screenrant website
-router.get("/", function (req, res) {
-    db.Article.find({ "saved": false }, function (error, data) {
-        var hbsObject = {
-            article: data
-        };
-        console.log(hbsObject)
-        res.render("index", hbsObject)
-    });
-});
+
+// GET /?limit=10&page=1
+router.get('/', async (req, res) => {
+    const { page = 1 } = req.query;
+    const limit = 10
+    
+    try {
+        const articles = await db.Article.find({ "saved": false })
+            .limit(parseInt(limit))
+            .skip((parseInt(page -1) * limit))
+            .exec()
+
+        const articlesObj = {
+            article: articles
+        }
+        res.render("index", articlesObj)
+        
+    } catch (e) {
+        console.log(e.message)
+    }
+    
+})
 
 router.get("/scrape", function (req, res) {
     // grabs the body of the html with axios
@@ -114,5 +127,7 @@ router.post("/newNote/:id", function (req, res) {
             res.json(err);
         });
 });
+
+
 
 module.exports = router
