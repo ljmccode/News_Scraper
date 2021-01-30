@@ -10,8 +10,12 @@ app.use(router)
 
 const PORT = process.env.PORT
 
-mongoose.connect(process.env.MONGODB_URL, { useNewUrlParser: true });
-
+mongoose.connect(process.env.MONGODB_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true, 
+  useCreateIndex: true, 
+  useFindAndModify: false
+})
 // Middleware
 app.use(logger("dev"));
 app.use(express.urlencoded({ extended: true }));
