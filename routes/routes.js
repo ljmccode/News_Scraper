@@ -9,25 +9,24 @@ const cheerio = require("cheerio");
 
 // GET /?limit=10&page=1
 router.get('/', async (req, res) => {
-    const { page = 1 } = req.query;
-    const limit = 10
-    
-    try {
-        const articles = await db.Article.find({ "saved": false })
-            .limit(parseInt(limit))
-            .skip((parseInt(page -1) * limit))
-            .exec()
-
-        const articlesObj = {
-            article: articles
-        }
-        res.render("index", articlesObj)
-        
-    } catch (e) {
-        console.log(e.message)
+    let page = req.query.page
+    if(!page) {
+        page =1 
     }
+    const limit = 10
+    const articles = await db.Article.find({ "saved": false })
+        .limit(parseInt(limit))
+        .skip((parseInt(page -1) * limit))
+        .exec()
+    // console.log("Articles:", articles)
+    const articlesObj = {
+        article: articles
+    }
+    res.render("index", articlesObj)
     
 })
+
+
 
 router.get("/scrape", function (req, res) {
     // grabs the body of the html with axios
